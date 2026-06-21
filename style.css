@@ -16,6 +16,12 @@ body{
     white-space: nowrap;
 }
 
+.page-title {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 button{
     padding:10px;
     font-size:18px;

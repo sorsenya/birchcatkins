@@ -11,11 +11,9 @@ body{
 }
 
 #title {
-    font-size: 24px;
-    text-align: center;
+    font-size: clamp(16px, 4vw, 24px);
+    text-align: left;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 button{
@@ -26,6 +24,12 @@ button{
     border-radius:10px;
 }
 
+.container {
+    background: transparent;
+    border-radius: 0;
+    padding: 20px;
+    box-shadow: none;
+}
 
 #content{
     max-width:700px;
@@ -33,4 +37,15 @@ button{
     background:white;
     padding:20px;
     border-radius:10px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+li {
+    margin-left: 0;
+    padding-left: 0;
 }

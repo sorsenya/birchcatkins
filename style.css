@@ -14,7 +14,6 @@ body {
     /* разрешаем перенос */
     white-space: normal;
     overflow-wrap: break-word;
-
     margin-bottom: 25px;
 }
 
@@ -24,21 +23,12 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
     gap: 12px;
 }
-
-/* Кнопки участков */
-button {
-    height: 65px;
-
-    font-size: 24px;
-    font-weight: 500;
-
-    cursor: pointer;
-    border: none;
-    border-radius: 12px;
-
-    background: #eeeeee;
-
-    transition: 0.15s;
+button{
+    padding:10px;
+    font-size:19px;
+    cursor:pointer;
+    border:none;
+    border-radius:15px;
 }
 
 button:hover {
@@ -60,14 +50,10 @@ button:active {
 
     padding: 20px;
 }
-
-#content {
-    max-width: 700px;
-    margin: auto;
-
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
+#content{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
 }
 
 /* Список долгов */
@@ -95,12 +81,4 @@ li {
     font-size: 20px;
     line-height: 1.5;
     margin-bottom: 8px;
-}
-
-/* Нет долгов */
-.no-debt {
-    font-size: 22px;
-    font-weight: bold;
-    color: green;
-    margin-top: 15px;
 }

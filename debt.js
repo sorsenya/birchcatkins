@@ -26,8 +26,8 @@ fetch("./debt.json")
             ${plot.owner}
         </h2>
 
-        <h3 style="margin:0 0 8px 0;">
-            Долги:
+        <h3 style="margin:0 0 8px 0;text-decoration:underline;">
+            Долги
         </h3>
     `;
 
@@ -54,9 +54,8 @@ fetch("./debt.json")
         <h3 style="margin:12px 0 8px 0;">
             Общий долг: ${plot.totalDebt} ₽
         </h3>
-
-        <h3 style="margin:12px 0 8px 0;">
-            Справка об оплате:
+        <h3 style="margin:12px 0 8px 0;text-decoration:underline;">
+            Справка об оплате
         </h3>
     `;
 
@@ -80,7 +79,6 @@ fetch("./debt.json")
                 Итого оплачено: ${totalPaid.toFixed(2)} ₽
             </h3>
         `;
-
     } else {
 
         html += `

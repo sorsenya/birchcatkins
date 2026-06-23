@@ -90,7 +90,7 @@ fetch("./debt.json")
 
     html += `
         <p style="margin-top:15px;">
-            <a href="./index.html">← Назад</a>
+            <a href="./payments.html">← Назад</a>
         </p>
     `;
 

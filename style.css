@@ -82,3 +82,44 @@ li {
     line-height: 1.5;
     margin-bottom: 8px;
 }
+
+.report-date {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.report-date {
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 8px;
+}
+
+#content h1 {
+    margin: 0 0 10px 0;
+}
+
+#content h2 {
+    margin: 0 0 14px 0;
+}
+
+#content h3 {
+    margin: 10px 0 4px 0;
+}
+
+#content div {
+    margin: 0;
+    padding: 0;
+    line-height: 1.3;
+}
+
+#content p {
+    margin-top: 14px;
+}
+
+.info-line,
+.payment-line {
+    margin: 0;
+    padding: 0;
+    line-height: 1.3;
+}

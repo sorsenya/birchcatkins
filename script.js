@@ -17,8 +17,8 @@ fetch(API_URL)
     }
 
     Object.keys(data)
-        .filter(key => key !== "_title")
-        .sort((a, b) => Number(a) - Number(b))
+    .filter(key => /^\d+$/.test(key))
+    .sort((a, b) => Number(a) - Number(b))
         .forEach(plot => {
 
             const button = document.createElement("button");

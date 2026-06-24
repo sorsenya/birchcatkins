@@ -3,32 +3,34 @@ const plotId = params.get("id");
 
 fetch("./debt.json")
 .then(r => r.json())
-.then(data => {
+.then(data => { 
 
     const plot = data[plotId];
+    const reportTitle = data._title || "";
 
     if (!plot) {
         document.getElementById("content").innerHTML =
-            "<h2>Участок не найден</h2>";
+            "<h2>РЈС‡Р°СЃС‚РѕРє РЅРµ РЅР°Р№РґРµРЅ</h2>";
         return;
     }
 
     let html = `
-        <div style="font-size:18px;margin-bottom:10px;">
-            ${data._title || ""}
+        <div class="report-title">
+            ${reportTitle}
         </div>
 
         <h1 style="margin:0 0 10px 0;">
-            Участок №${plotId}
+            РЈС‡Р°СЃС‚РѕРє в„–${plotId}
         </h1>
-
         <h2 style="margin:0 0 15px 0;">
             ${plot.owner}
         </h2>
 
+        <div class="section-line"></div>
+
         <h3 style="margin:0 0 8px 0;text-decoration:underline;">
-            Долги
-        </h3>
+            Р”РѕР»РіРё
+        </h3> 
     `;
 
     if (plot.debts && plot.debts.length > 0) {
@@ -36,7 +38,7 @@ fetch("./debt.json")
         plot.debts.forEach(debt => {
             html += `
                 <div style="margin-bottom:3px;">
-                    ${debt.title} — ${debt.debt} ₽
+                    ${debt.title} вЂ” ${debt.debt} в‚Ѕ
                 </div>
             `;
         });
@@ -45,17 +47,19 @@ fetch("./debt.json")
 
         html += `
             <div style="margin-bottom:3px;">
-                У вас отсутствует задолженность 🙂
+                РЈ РІР°СЃ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ Р·Р°РґРѕР»Р¶РµРЅРЅРѕСЃС‚СЊ рџ™‚
             </div>
         `;
     }
-
     html += `
         <h3 style="margin:12px 0 8px 0;">
-            Общий долг: ${plot.totalDebt} ₽
+            РћР±С‰РёР№ РґРѕР»Рі: ${plot.totalDebt} в‚Ѕ
         </h3>
+
+        <div class="section-line"></div>
+
         <h3 style="margin:12px 0 8px 0;text-decoration:underline;">
-            Справка об оплате
+            РЎРїСЂР°РІРєР° РѕР± РѕРїР»Р°С‚Рµ
         </h3>
     `;
 
@@ -69,28 +73,29 @@ fetch("./debt.json")
 
             html += `
                 <div style="margin-bottom:3px;">
-                    ${payment.date} — ${payment.amount} ₽
+                    ${payment.date} вЂ” ${payment.amount} в‚Ѕ
                 </div>
             `;
         });
 
         html += `
             <h3 style="margin:12px 0 8px 0;">
-                Итого оплачено: ${totalPaid.toFixed(2)} ₽
+                РС‚РѕРіРѕ РѕРїР»Р°С‡РµРЅРѕ: ${totalPaid.toFixed(2)} в‚Ѕ
             </h3>
+            <div class="section-line"></div>
         `;
     } else {
 
         html += `
             <div style="margin-bottom:3px;">
-                Оплат не найдено
+                РћРїР»Р°С‚ РЅРµ РЅР°Р№РґРµРЅРѕ
             </div>
         `;
     }
 
     html += `
         <p style="margin-top:15px;">
-            <a href="./payments.html">← Назад</a>
+            <a href="./payments.html">в†ђ РќР°Р·Р°Рґ</a>
         </p>
     `;
 
@@ -102,6 +107,6 @@ fetch("./debt.json")
     console.error(error);
 
     document.getElementById("content").innerHTML =
-        "Ошибка загрузки данных";
+        "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С…";
 
 });

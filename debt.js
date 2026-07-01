@@ -35,6 +35,9 @@ fetch("./debt.json")
             Участок №${plotId}
 
         </h1>
+        <div style="margin-bottom:18px;font-size:18px;color:#555;">
+            Площадь участка: <b>${plot.area} сот.</b>
+        </div>
 
         <div class="section-line"></div>
 
@@ -150,7 +153,7 @@ fetch("./debt.json")
 
         <h3 style="margin:12px 0 8px 0;text-decoration:underline;">
 
-            Долги
+            Задолженность
 
         </h3>
 
@@ -184,7 +187,7 @@ fetch("./debt.json")
 
             <div style="margin-bottom:3px;">
 
-                У вас отсутствует задолженность 🙂
+                Задолженность отсутствует 🙂
 
             </div>
 
@@ -223,3 +226,4 @@ fetch("./debt.json")
         "Ошибка загрузки данных";
 
 });
+    

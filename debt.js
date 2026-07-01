@@ -18,14 +18,9 @@ fetch("./debt.json")
         <div class="report-title">
             ${reportTitle}
         </div>
-
-        <h1 style="margin:0 0 10px 0;">
+        <h1 style="margin:0 0 15px 0;">
             Участок №${plotId}
         </h1>
-        <h2 style="margin:0 0 15px 0;">
-            ${plot.owner}
-        </h2>
-
         <div class="section-line"></div>
     `;
 

@@ -1,4 +1,4 @@
-const API_URL = "./debt.json";
+const API_URL = "./debts.json";
 
 fetch(API_URL)
 .then(response => response.json())
@@ -9,16 +9,13 @@ fetch(API_URL)
 
     plots.innerHTML = "";
 
-    // если есть заголовок — используем, если нет — ставим дефолт
-    if (data._title) {
-        title.textContent = data._title;
-    } else {
-        title.textContent = "Список участков";
-    }
+    // Заголовок
+    title.textContent = data._title || "Список участков";
 
+    // Кнопки участков
     Object.keys(data)
-    .filter(key => /^\d+$/.test(key))
-    .sort((a, b) => Number(a) - Number(b))
+        .filter(key => /^\d+$/.test(key))
+        .sort((a, b) => Number(a) - Number(b))
         .forEach(plot => {
 
             const button = document.createElement("button");
@@ -31,6 +28,7 @@ fetch(API_URL)
             };
 
             plots.appendChild(button);
+
         });
 
 })
@@ -40,4 +38,5 @@ fetch(API_URL)
 
     document.getElementById("plots").innerHTML =
         "Ошибка загрузки данных";
+
 });

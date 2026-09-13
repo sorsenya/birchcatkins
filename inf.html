@@ -2,13 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes">
 <title>Схема территории — СНТ «Летняя Березка»</title>
 <style>
   :root{
-    --accent:#3f7d5c;
-    --accent-dark:#2f5f46;
-    --accent-light:#e7f1ec;
+    --accent:#3068c2;
+    --accent-dark:#204a91;
+    --accent-light:#e8eefb;
     --text-main:#233029;
     --text-muted:#6b7a73;
   }
@@ -62,7 +62,7 @@
     align-items:center;
     gap:10px;
     background:var(--accent-light);
-    border:1px solid #cfe1d7;
+    border:1px solid #c8d7f2;
     border-radius:999px;
     padding:8px 16px 8px 8px;
     cursor:pointer;
@@ -110,29 +110,6 @@
     white-space:nowrap;
   }
 
-  .zoom-controls{
-    display:inline-flex;
-    gap:6px;
-  }
-
-  .zoom-controls button{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    border:1px solid #d6ded9;
-    background:#fff;
-    color:var(--accent-dark);
-    font-size:18px;
-    line-height:1;
-    cursor:pointer;
-    transition:background .15s ease,border-color .15s ease;
-  }
-
-  .zoom-controls button:hover{
-    background:var(--accent-light);
-    border-color:var(--accent);
-  }
-
   .map-wrapper{
     position:relative;
     border:1px solid #e3e9e5;
@@ -140,15 +117,13 @@
     background:#fff;
     overflow:auto;
     -webkit-overflow-scrolling:touch;
-    touch-action:pan-x pan-y;
+    touch-action:pan-x pan-y pinch-zoom;
     max-height:75vh;
   }
 
   .map-inner{
     width:100%;
     min-width:100%;
-    transform-origin:0 0;
-    transition:width .15s ease-out;
     position:relative;
   }
 
@@ -171,60 +146,12 @@
   .map-roads-highlight{
     opacity:0;
     transition:opacity .2s ease;
+    filter:hue-rotate(150deg) saturate(1.4);
   }
 
   .map-roads-highlight.active{
     opacity:1;
   }
-
-  .plot-hit{
-    fill:rgba(63,125,92,0);
-    stroke:none;
-    cursor:default;
-  }
-
-  .hover-label{
-    font-size:27px;
-    font-weight:700;
-    fill:var(--accent-dark);
-    text-anchor:middle;
-    dominant-baseline:middle;
-    pointer-events:none;
-    opacity:0;
-    transition:opacity .1s ease;
-  }
-
-  .hover-label.visible{
-    opacity:1;
-  }
-
-  .tooltip{
-    position:absolute;
-    pointer-events:none;
-    background:var(--accent-dark);
-    color:#fff;
-    font-size:13px;
-    font-weight:600;
-    padding:6px 10px;
-    border-radius:8px;
-    transform:translate(-50%,-130%);
-    white-space:nowrap;
-    opacity:0;
-    transition:opacity .1s ease;
-    z-index:5;
-  }
-
-  .tooltip::after{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:100%;
-    transform:translateX(-50%);
-    border:5px solid transparent;
-    border-top-color:var(--accent-dark);
-  }
-
-  .tooltip.visible{opacity:1;}
 
   .legend{
     display:flex;
@@ -252,11 +179,6 @@
     flex:none;
   }
 
-  .legend .legend-note{
-    font-size:11.5px;
-    color:#94a39c;
-  }
-
   @media (max-width:640px){
     .territory-header h2{font-size:22px;}
     .territory-section{padding:20px 12px 36px;}
@@ -278,12 +200,6 @@
       <span class="switch"></span>
       <span class="label-text">❄️ Зимняя уборка дорог</span>
     </label>
-
-    <div class="zoom-controls">
-      <button type="button" id="zoomOut" aria-label="Уменьшить">−</button>
-      <button type="button" id="zoomReset" aria-label="Сбросить масштаб">⟲</button>
-      <button type="button" id="zoomIn" aria-label="Увеличить">+</button>
-    </div>
   </div>
 
   <div class="map-wrapper" id="mapWrapper">
@@ -325,145 +241,24 @@
           preserveAspectRatio="none"
         />
 
-        <!-- Прозрачные зоны клика. Их координаты привязаны к номерам участков. -->
-        <g id="plots-layer"></g>
-        <g id="hover-labels"></g>
       </svg>
     </div>
-
-    <div class="tooltip" id="tooltip"></div>
   </div>
 
   <div class="legend" id="roadsLegend">
     <span class="swatch"></span>
-    <span>Зелёным показаны участки дорог, которые планируется очищать зимой.</span>
-    <span class="legend-note">(маршрут предварительный, будет уточнён)</span>
+    <span>Синим показаны участки дорог, которые планируется очищать зимой.</span>
   </div>
 
 </section>
 
 <script>
 /*
- * Карта визуально взята непосредственно из исходной схемы.
- * Координаты ниже используются только для интерактивных зон.
- *
- * При необходимости можно менять размер зоны клика:
- * CLICK_RADIUS.
+ * Карта полностью статична: участки не кликабельны,
+ * никаких подсказок или деталей по нажатию не показывается.
+ * Масштабирование выполняется нативным жестом "два пальца" (pinch-to-zoom).
  */
 
-const plots = {
-  1:{cx:1004.0,cy:476.1},  2:{cx:884.5,cy:365.9},
-  3:{cx:789.5,cy:279.5},  4:{cx:683.5,cy:194.4},
-  5:{cx:528.5,cy:346.2},  6:{cx:618.0,cy:445.0},
-  7:{cx:707.8,cy:501.8},  8:{cx:810.6,cy:611.2},
-  9:{cx:454.3,cy:622.2}, 10:{cx:573.2,cy:661.0},
- 11:{cx:618.8,cy:861.7}, 12:{cx:469.6,cy:875.0},
- 13:{cx:414.8,cy:1081.3},14:{cx:960.9,cy:647.5},
- 15:{cx:1010.7,cy:858.0},16:{cx:1107.4,cy:963.0},
- 17:{cx:752.5,cy:911.0},18:{cx:823.2,cy:1021.4},
- 19:{cx:982.5,cy:1122.4},20:{cx:1014.5,cy:1183.7},
- 21:{cx:586.0,cy:1086.4},22:{cx:700.6,cy:1170.1},
- 23:{cx:803.4,cy:1271.0},24:{cx:897.0,cy:1383.8},
- 25:{cx:977.7,cy:1536.9},26:{cx:477.9,cy:1253.0},
- 27:{cx:627.8,cy:1375.9},28:{cx:754.8,cy:1542.2},
- 29:{cx:899.0,cy:1723.0},30:{cx:357.9,cy:1299.4},
- 31:{cx:502.7,cy:1495.4},32:{cx:684.0,cy:1675.7},
- 33:{cx:799.8,cy:1817.0},34:{cx:939.4,cy:1978.7},
- 35:{cx:346.3,cy:1579.1},36:{cx:349.5,cy:1743.8},
- 37:{cx:352.6,cy:1888.4},38:{cx:344.0,cy:2024.7},
- 39:{cx:335.2,cy:2161.2},40:{cx:329.5,cy:2301.0},
- 41:{cx:531.6,cy:1756.0},42:{cx:566.1,cy:1894.4},
- 43:{cx:568.7,cy:2047.7},44:{cx:544.8,cy:2175.5},
- 45:{cx:560.2,cy:2307.8},46:{cx:741.4,cy:1992.3},
- 47:{cx:894.1,cy:2223.6},48:{cx:713.4,cy:2266.6},
- 49:{cx:1020.3,cy:2208.0},50:{cx:863.8,cy:2491.2},
- 51:{cx:1014.8,cy:2457.0},52:{cx:1024.5,cy:2699.8},
- 53:{cx:743.6,cy:2861.3},54:{cx:872.6,cy:2843.1},
- 55:{cx:609.5,cy:2677.7},56:{cx:820.6,cy:2590.0},
- 57:{cx:576.9,cy:2474.4},58:{cx:214.2,cy:2479.8},
- 59:{cx:360.4,cy:2473.0},60:{cx:361.6,cy:2611.8},
- 61:{cx:405.8,cy:2735.4},62:{cx:403.7,cy:2851.3},
- 63:{cx:631.4,cy:2880.2},64:{cx:576.0,cy:2964.5},
- 65:{cx:406.6,cy:2949.7},66:{cx:416.6,cy:3045.3},
- 67:{cx:1111.1,cy:302.8},68:{cx:974.6,cy:201.2},
- 69:{cx:1218.9,cy:428.7},70:{cx:1118.7,cy:688.3}
-};
-
-const CLICK_RADIUS = 48;
-
-const svg = document.getElementById("territory-svg");
-const wrapper = document.getElementById("mapWrapper");
-const tooltip = document.getElementById("tooltip");
-const plotsLayer = document.getElementById("plots-layer");
-const hoverLabels = document.getElementById("hover-labels");
-
-function createSvgElement(tag, attrs){
-  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-  Object.entries(attrs).forEach(([key,value]) => el.setAttribute(key,value));
-  return el;
-}
-
-Object.entries(plots).forEach(([id, point]) => {
-  const hit = createSvgElement("circle", {
-    class:"plot-hit",
-    "data-id":id,
-    cx:point.cx,
-    cy:point.cy,
-    r:CLICK_RADIUS
-  });
-
-  const label = createSvgElement("text", {
-    class:"hover-label",
-    "data-id":id,
-    x:point.cx,
-    y:point.cy
-  });
-  label.textContent = id;
-
-  hit.addEventListener("mouseenter", e => {
-    label.classList.add("visible");
-    showTooltip(e, id);
-  });
-
-  hit.addEventListener("mousemove", e => {
-    positionTooltip(e);
-  });
-
-  hit.addEventListener("mouseleave", () => {
-    label.classList.remove("visible");
-    hideTooltip();
-  });
-
-  hit.addEventListener("touchstart", e => {
-    label.classList.add("visible");
-    showTooltip(e.touches[0], id);
-  }, {passive:true});
-
-  plotsLayer.appendChild(hit);
-  hoverLabels.appendChild(label);
-});
-
-function showTooltip(e,id){
-  tooltip.textContent = "Участок №" + id;
-  tooltip.classList.add("visible");
-  positionTooltip(e);
-}
-
-function positionTooltip(e){
-  const rect = wrapper.getBoundingClientRect();
-  tooltip.style.left =
-    (e.clientX - rect.left + wrapper.scrollLeft) + "px";
-  tooltip.style.top =
-    (e.clientY - rect.top + wrapper.scrollTop) + "px";
-}
-
-function hideTooltip(){
-  tooltip.classList.remove("visible");
-}
-
-/* ==========================
-   ЗИМНИЕ ДОРОГИ
-   ========================== */
 const roadsToggle = document.getElementById("roadsToggle");
 const roadsImageHighlight = document.getElementById("roadsImageHighlight");
 const roadsLegend = document.getElementById("roadsLegend");
@@ -471,37 +266,6 @@ const roadsLegend = document.getElementById("roadsLegend");
 roadsToggle.addEventListener("change", () => {
   roadsImageHighlight.classList.toggle("active", roadsToggle.checked);
   roadsLegend.classList.toggle("visible", roadsToggle.checked);
-});
-
-/* ==========================
-   ZOOM
-   ========================== */
-const mapInner = document.getElementById("mapInner");
-
-let scale = 1;
-const MIN_SCALE = 1;
-const MAX_SCALE = 3;
-const STEP = 0.25;
-
-function applyScale(){
-  mapInner.style.width = (scale * 100) + "%";
-}
-
-document.getElementById("zoomIn").addEventListener("click", () => {
-  scale = Math.min(MAX_SCALE, +(scale + STEP).toFixed(2));
-  applyScale();
-});
-
-document.getElementById("zoomOut").addEventListener("click", () => {
-  scale = Math.max(MIN_SCALE, +(scale - STEP).toFixed(2));
-  applyScale();
-});
-
-document.getElementById("zoomReset").addEventListener("click", () => {
-  scale = 1;
-  applyScale();
-  wrapper.scrollLeft = 0;
-  wrapper.scrollTop = 0;
 });
 </script>
 </body>
